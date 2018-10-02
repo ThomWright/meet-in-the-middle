@@ -1,0 +1,4 @@
+tmp
+config/secret*
+node_modules
+.next
