@@ -1,5 +1,8 @@
 import * as React from "react"
-import GoogleMapReact, {ChildComponentProps} from "google-map-react"
+import GoogleMapReact, {
+  ChildComponentProps,
+  ClickEventValue,
+} from "google-map-react"
 import Head from "next/head"
 import config from "../config/secret.json"
 
@@ -19,6 +22,58 @@ export default class IndexPage extends React.Component<Props, State> {
     this.state = {
       locations: [],
     }
+    this.findPub = this.findPub.bind(this)
+    this.reset = this.reset.bind(this)
+    this.onClickMap = this.onClickMap.bind(this)
+    this.onGoogleApiLoaded = this.onGoogleApiLoaded.bind(this)
+  }
+
+  private findPub() {
+    const middle = {
+      lat: 51.4598044,
+      lng: -2.5868507,
+    }
+    if (!this.placesService) {
+      throw new Error("Places service not initialised")
+    }
+    this.placesService.nearbySearch(
+      {
+        location: middle,
+        type: "bar",
+        rankBy: google.maps.places.RankBy.DISTANCE,
+      },
+      (results, status) => {
+        console.log(results, status)
+        this.setState(() => {
+          return {
+            place: results[0],
+          }
+        })
+      },
+    )
+  }
+
+  private reset() {
+    this.setState(() => {
+      return {
+        locations: [],
+        place: undefined,
+      }
+    })
+  }
+
+  // tslint:disable-next-line no-any
+  private onGoogleApiLoaded({map, maps}: {map: any; maps: any}) {
+    this.placesService = new maps.places.PlacesService(map)
+  }
+
+  private onClickMap({lat, lng}: ClickEventValue) {
+    console.log(lat, lng)
+    this.setState(prevState => {
+      return {
+        locations: [...prevState.locations, {lat, lng}],
+      }
+    })
   }
 
   public render() {
@@ -49,51 +104,11 @@ export default class IndexPage extends React.Component<Props, State> {
             ))}
             {(() => {
               if (this.state.locations.length > 1) {
-                return (
-                  <button
-                    onClick={() => {
-                      const middle = {
-                        lat: 51.4598044,
-                        lng: -2.5868507,
-                      }
-                      if (!this.placesService) {
-                        throw new Error("Places service not initialised")
-                      }
-                      this.placesService.nearbySearch(
-                        {
-                          location: middle,
-                          type: "bar",
-                          rankBy: google.maps.places.RankBy.DISTANCE,
-                        },
-                        (results, status) => {
-                          console.log(results, status)
-                          this.setState(() => {
-                            return {
-                              place: results[0],
-                            }
-                          })
-                        },
-                      )
-                    }}
-                  >
-                    Find a pub!
-                  </button>
-                )
+                return <button onClick={this.findPub}>Find a pub!</button>
               }
             })()}
             {this.state.place && this.state.place.name}
-            <button
-              onClick={() => {
-                this.setState(() => {
-                  return {
-                    locations: [],
-                    place: undefined,
-                  }
-                })
-              }}
-            >
-              Reset
-            </button>
+            <button onClick={this.reset}>Reset</button>
           </div>
           <div
             style={{
@@ -107,23 +122,14 @@ export default class IndexPage extends React.Component<Props, State> {
                   key: string
                 }
               }
-              onGoogleApiLoaded={({map, maps}) => {
-                this.placesService = new maps.places.PlacesService(map)
-              }}
+              onGoogleApiLoaded={this.onGoogleApiLoaded}
               yesIWantToUseGoogleMapApiInternals={true}
               defaultCenter={{
                 lat: 51.4598044,
                 lng: -2.5868507,
               }}
               defaultZoom={15}
-              onClick={({lat, lng}) => {
-                console.log(lat, lng)
-                this.setState(prevState => {
-                  return {
-                    locations: [...prevState.locations, {lat, lng}],
-                  }
-                })
-              }}
+              onClick={this.onClickMap}
             >
               {this.state.locations.map((l, i) => {
                 return <Marker key={i} lat={l.lat} lng={l.lng} />
