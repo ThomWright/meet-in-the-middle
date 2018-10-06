@@ -126,76 +126,127 @@ export default class IndexPage extends React.Component<Props, State> {
           />
         </Head>
         <style>{"* {margin: 0;}"}</style>
-        <div
-          style={{
-            height: "100vh",
-          }}
-        >
-          <div
-            style={{
-              height: TOP_HEIGHT_PERCENT.toString() + "%",
-              overflowY: "scroll",
-            }}
-          >
-            {this.state.locations.length === 0 ? (
-              <p>Choose two or more locations on the map</p>
-            ) : null}
-            {this.state.locations.map((l, i) => (
-              <div key={i}>
-                {l.address}
-                <LatLng {...l} />
-              </div>
-            ))}
-            {(() => {
-              if (this.state.locations.length > 1) {
-                return <button onClick={this.findPub}>Find a pub!</button>
-              }
-            })()}
-            <div>
-              {this.state.place && this.state.place.name}{" "}
-              <p style={{display: "inline", color: "grey"}}>
-                {this.state.place && this.state.place.vicinity}
-              </p>
-            </div>
-            <button onClick={this.reset}>Reset</button>
-          </div>
-          <div
-            style={{
-              height: (100 - TOP_HEIGHT_PERCENT).toString() + "%",
-              width: "100%",
-            }}
-          >
-            <GoogleMapReact
-              bootstrapURLKeys={
-                {key: config.GOOGLE_API_KEY, libraries: "places"} as {
-                  key: string
+        <Layout>
+          {{
+            selectedLocations: (
+              <SelectedLocations
+                locations={this.state.locations}
+                onReset={this.reset}
+                findPub={this.findPub}
+              />
+            ),
+            map: (
+              <GoogleMapReact
+                bootstrapURLKeys={
+                  {key: config.GOOGLE_API_KEY, libraries: "places"} as {
+                    key: string
+                  }
                 }
-              }
-              onGoogleApiLoaded={this.onGoogleApiLoaded}
-              yesIWantToUseGoogleMapApiInternals={true}
-              defaultCenter={{
-                lat: 51.4598044,
-                lng: -2.5868507,
-              }}
-              defaultZoom={15}
-              onClick={this.onClickMap}
-            >
-              {this.state.locations.map((l, i) => {
-                return <Marker key={i} lat={l.lat} lng={l.lng} />
-              })}
-              {this.state.place && (
-                <Marker
-                  color="blue"
-                  lat={this.state.place.geometry.location.lat()}
-                  lng={this.state.place.geometry.location.lng()}
-                />
-              )}
-            </GoogleMapReact>
-          </div>
-        </div>
+                onGoogleApiLoaded={this.onGoogleApiLoaded}
+                yesIWantToUseGoogleMapApiInternals={true}
+                defaultCenter={{
+                  lat: 51.4598044,
+                  lng: -2.5868507,
+                }}
+                defaultZoom={15}
+                onClick={this.onClickMap}
+              >
+                {this.state.locations.map((l, i) => {
+                  return <Marker key={i} lat={l.lat} lng={l.lng} />
+                })}
+                {this.state.place && (
+                  <Marker
+                    color="blue"
+                    lat={this.state.place.geometry.location.lat()}
+                    lng={this.state.place.geometry.location.lng()}
+                  />
+                )}
+              </GoogleMapReact>
+            ),
+            recommendedLocations: (
+              <RecommendedLocatons place={this.state.place} />
+            ),
+          }}
+        </Layout>
       </div>
     )
   }
+}
+
+interface SelectedLocationsProps {
+  locations: Array<Location>
+  onReset: () => void
+  findPub: () => void
+}
+function SelectedLocations(props: SelectedLocationsProps) {
+  return (
+    <div>
+      {props.locations.length === 0 ? (
+        <p>Choose two or more locations on the map</p>
+      ) : null}
+      {props.locations.map((l, i) => (
+        <div key={i}>
+          {l.address}
+          <LatLng {...l} />
+        </div>
+      ))}
+      {(() => {
+        if (props.locations.length > 1) {
+          return <button onClick={props.findPub}>Find a pub!</button>
+        }
+      })()}
+
+      <button onClick={props.onReset}>Reset</button>
+    </div>
+  )
+}
+
+interface RecommendedLocatons {
+  place?: google.maps.places.PlaceResult
+}
+function RecommendedLocatons(props: RecommendedLocatons) {
+  return (
+    <div>
+      {props.place && props.place.name}{" "}
+      <p style={{display: "inline", color: "grey"}}>
+        {props.place && props.place.vicinity}
+      </p>
+    </div>
+  )
+}
+
+interface LayoutProps {
+  children: {
+    selectedLocations: React.ReactNode
+    map: React.ReactNode
+    recommendedLocations: React.ReactNode
+  }
+}
+function Layout(props: LayoutProps) {
+  return (
+    <div
+      style={{
+        height: "100vh",
+      }}
+    >
+      <div
+        style={{
+          height: TOP_HEIGHT_PERCENT.toString() + "%",
+          overflowY: "scroll",
+        }}
+      >
+        {props.children.selectedLocations}
+      </div>
+      <div
+        style={{
+          height: (100 - TOP_HEIGHT_PERCENT).toString() + "%",
+          width: "100%",
+        }}
+      >
+        {props.children.map}
+      </div>
+    </div>
+  )
 }
 
 function LatLng(props: Coords) {
