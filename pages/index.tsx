@@ -2,6 +2,7 @@ import GoogleMapReact, {
   ChildComponentProps,
   ClickEventValue,
   Coords,
+  MapTypeStyle,
 } from "google-map-react"
 import Head from "next/head"
 import * as React from "react"
@@ -156,6 +157,9 @@ export default class IndexPage extends React.Component<Props, State> {
                 }}
                 defaultZoom={15}
                 onClick={this.onClickMap}
+                options={{
+                  styles: googleMapStyles(),
+                }}
               >
                 {this.state.chosenLocations.map((l, i) => {
                   return <Marker key={i} lat={l.lat} lng={l.lng} />
@@ -193,4 +197,83 @@ function Marker(props: MarkerProps) {
       }}
     />
   )
+}
+
+function googleMapStyles(): Array<MapTypeStyle> {
+  return [
+    {elementType: "geometry", stylers: [{color: "#f5f5f5"}]} as any,
+    {elementType: "labels.icon", stylers: [{visibility: "off"}]} as any,
+    {elementType: "labels.text.fill", stylers: [{color: "#616161"}]} as any,
+    {elementType: "labels.text.stroke", stylers: [{color: "#f5f5f5"}]} as any,
+    {
+      featureType: "administrative.land_parcel",
+      elementType: "labels.text.fill",
+      stylers: [{color: "#bdbdbd"}],
+    },
+    {
+      featureType: "poi",
+      elementType: "geometry",
+      stylers: [{color: "#eeeeee"}],
+    },
+    {
+      featureType: "poi",
+      elementType: "labels.text.fill",
+      stylers: [{color: "#757575"}],
+    },
+    {
+      featureType: "poi.park",
+      elementType: "geometry",
+      stylers: [{color: "#e5e5e5"}],
+    },
+    {
+      featureType: "poi.park",
+      elementType: "labels.text.fill",
+      stylers: [{color: "#9e9e9e"}],
+    },
+    {
+      featureType: "road",
+      elementType: "geometry",
+      stylers: [{color: "#ffffff"}],
+    },
+    {
+      featureType: "road.arterial",
+      elementType: "labels.text.fill",
+      stylers: [{color: "#757575"}],
+    },
+    {
+      featureType: "road.highway",
+      elementType: "geometry",
+      stylers: [{color: "#dadada"}],
+    },
+    {
+      featureType: "road.highway",
+      elementType: "labels.text.fill",
+      stylers: [{color: "#616161"}],
+    },
+    {
+      featureType: "road.local",
+      elementType: "labels.text.fill",
+      stylers: [{color: "#9e9e9e"}],
+    },
+    {
+      featureType: "transit.line",
+      elementType: "geometry",
+      stylers: [{color: "#e5e5e5"}],
+    },
+    {
+      featureType: "transit.station",
+      elementType: "geometry",
+      stylers: [{color: "#eeeeee"}],
+    },
+    {
+      featureType: "water",
+      elementType: "geometry",
+      stylers: [{color: "#c9c9c9"}],
+    },
+    {
+      featureType: "water",
+      elementType: "labels.text.fill",
+      stylers: [{color: "#9e9e9e"}],
+    },
+  ]
 }
