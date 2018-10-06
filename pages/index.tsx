@@ -1,18 +1,19 @@
-import * as React from "react"
 import GoogleMapReact, {
   ChildComponentProps,
   ClickEventValue,
   Coords,
 } from "google-map-react"
 import Head from "next/head"
+import * as React from "react"
 import config from "../config/secret.json"
-
-const TOP_HEIGHT_PERCENT = 20
+import {Layout} from "../src/layout"
+import {RecommendedLocatons} from "../src/recommended-locations"
+import {SelectedLocations} from "../src/selected-locations"
+import {Loc} from "../src/types"
 
 type Props = undefined
-type Location = Coords & {address?: string}
 interface State {
-  locations: Array<Location>
+  locations: Array<Loc>
   place?: google.maps.places.PlaceResult
 }
 
@@ -95,7 +96,7 @@ export default class IndexPage extends React.Component<Props, State> {
         },
       },
       (result, status) => {
-        const loc: Location = {
+        const loc: Loc = {
           lat,
           lng,
         }
@@ -171,106 +172,6 @@ export default class IndexPage extends React.Component<Props, State> {
       </div>
     )
   }
-}
-
-interface SelectedLocationsProps {
-  locations: Array<Location>
-  onReset: () => void
-  findPub: () => void
-}
-function SelectedLocations(props: SelectedLocationsProps) {
-  return (
-    <div>
-      {props.locations.length === 0 ? (
-        <p>Choose two or more locations on the map</p>
-      ) : null}
-      {props.locations.map((l, i) => (
-        <div key={i}>
-          {l.address}
-          <LatLng {...l} />
-        </div>
-      ))}
-      {(() => {
-        if (props.locations.length > 1) {
-          return <button onClick={props.findPub}>Find a pub!</button>
-        }
-      })()}
-
-      <button onClick={props.onReset}>Reset</button>
-    </div>
-  )
-}
-
-interface RecommendedLocatons {
-  place?: google.maps.places.PlaceResult
-}
-function RecommendedLocatons(props: RecommendedLocatons) {
-  return (
-    <div>
-      {props.place && props.place.name}{" "}
-      <p style={{display: "inline", color: "grey"}}>
-        {props.place && props.place.vicinity}
-      </p>
-    </div>
-  )
-}
-
-interface LayoutProps {
-  children: {
-    selectedLocations: React.ReactNode
-    map: React.ReactNode
-    recommendedLocations: React.ReactNode
-  }
-}
-function Layout(props: LayoutProps) {
-  return (
-    <div
-      style={{
-        height: "100vh",
-        display: "flex",
-        flexDirection: "row",
-      }}
-    >
-      <div
-        style={{
-          overflowY: "scroll",
-          width: 300,
-        }}
-      >
-        {props.children.selectedLocations}
-      </div>
-      <div
-        style={{
-          flexGrow: 1,
-        }}
-      >
-        <div
-          style={{
-            height: "100%",
-            width: "100%",
-          }}
-        >
-          {props.children.map}
-        </div>
-      </div>
-      <div
-        style={{
-          overflowY: "scroll",
-          width: 300,
-        }}
-      >
-        {props.children.recommendedLocations}
-      </div>
-    </div>
-  )
-}
-
-function LatLng(props: Coords) {
-  return (
-    <div style={{color: "grey", fontSize: 10}}>
-      {props.lat.toFixed(6)}, {props.lng.toFixed(6)}
-    </div>
-  )
 }
 
 interface MarkerProps extends ChildComponentProps {
