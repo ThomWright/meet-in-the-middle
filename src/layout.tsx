@@ -16,15 +16,7 @@ export function Layout(props: LayoutProps) {
         flexDirection: "row",
       }}
     >
-      <div
-        style={{
-          // overflowY: "scroll",
-          height: "100%",
-          width: 300,
-        }}
-      >
-        {props.children.selectedLocations}
-      </div>
+      <Column>{props.children.selectedLocations}</Column>
       <div
         style={{
           flexGrow: 1,
@@ -39,15 +31,22 @@ export function Layout(props: LayoutProps) {
           {props.children.map}
         </div>
       </div>
-      <div
-        style={{
-          // overflowY: "scroll",
-          height: "100%",
-          width: 300,
-        }}
-      >
-        {props.children.recommendedLocations}
-      </div>
+      <Column>{props.children.recommendedLocations}</Column>
+    </div>
+  )
+}
+
+function Column(props: {children: React.ReactNode}) {
+  return (
+    <div
+      style={{
+        height: "100%",
+        width: 300,
+        padding: 8,
+        overflowY: "hidden",
+      }}
+    >
+      {props.children}
     </div>
   )
 }

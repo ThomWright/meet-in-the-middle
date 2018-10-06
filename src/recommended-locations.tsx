@@ -1,15 +1,19 @@
 import * as React from "react"
 
 interface RecommendedLocatonsProps {
-  place?: google.maps.places.PlaceResult
+  places: Array<google.maps.places.PlaceResult>
 }
 export function RecommendedLocatons(props: RecommendedLocatonsProps) {
   return (
-    <div>
-      {props.place && props.place.name}{" "}
-      <p style={{display: "inline", color: "grey"}}>
-        {props.place && props.place.vicinity}
-      </p>
+    <div style={{height: "100%", overflowY: "scroll"}}>
+      {props.places.map((p, i) => (
+        <>
+          {p.name}
+          <div key={i} style={{paddingBottom: 8}}>
+            <p style={{display: "inline", color: "grey"}}>{p.vicinity}</p>
+          </div>
+        </>
+      ))}
     </div>
   )
 }

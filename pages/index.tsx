@@ -8,13 +8,13 @@ import * as React from "react"
 import config from "../config/secret.json"
 import {Layout} from "../src/layout"
 import {RecommendedLocatons} from "../src/recommended-locations"
-import {SelectedLocations} from "../src/selected-locations"
+import {ChosenLocations} from "../src/chosen-locations"
 import {Loc} from "../src/types"
 
 type Props = undefined
 interface State {
-  locations: Array<Loc>
-  place?: google.maps.places.PlaceResult
+  chosenLocations: Array<Loc>
+  recommendedPlaces: Array<google.maps.places.PlaceResult>
 }
 
 function getMiddle(locations: Array<Coords>): Coords {
@@ -36,7 +36,8 @@ export default class IndexPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
-      locations: [],
+      chosenLocations: [],
+      recommendedPlaces: [],
     }
     this.findPub = this.findPub.bind(this)
     this.reset = this.reset.bind(this)
@@ -45,7 +46,11 @@ export default class IndexPage extends React.Component<Props, State> {
   }
 
   private findPub() {
-    const middle = getMiddle(this.state.locations)
+    if (this.state.chosenLocations.length < 2) {
+      return
+    }
+
+    const middle = getMiddle(this.state.chosenLocations)
 
     console.log(middle)
 
@@ -62,7 +67,7 @@ export default class IndexPage extends React.Component<Props, State> {
         console.log(results, status)
         this.setState(() => {
           return {
-            place: results[0],
+            recommendedPlaces: results,
           }
         })
       },
@@ -72,8 +77,8 @@ export default class IndexPage extends React.Component<Props, State> {
   private reset() {
     this.setState(() => {
       return {
-        locations: [],
-        place: undefined,
+        chosenLocations: [],
+        recommendedPlaces: [],
       }
     })
   }
@@ -106,7 +111,7 @@ export default class IndexPage extends React.Component<Props, State> {
         }
         this.setState(prevState => {
           return {
-            locations: [...prevState.locations, loc],
+            chosenLocations: [...prevState.chosenLocations, loc],
           }
         })
       },
@@ -126,12 +131,12 @@ export default class IndexPage extends React.Component<Props, State> {
             content="initial-scale=1.0, width=device-width"
           />
         </Head>
-        <style>{"* {margin: 0;}"}</style>
+        <style>{"* {margin: 0; box-sizing: border-box}"}</style>
         <Layout>
           {{
             selectedLocations: (
-              <SelectedLocations
-                locations={this.state.locations}
+              <ChosenLocations
+                locations={this.state.chosenLocations}
                 onReset={this.reset}
                 findPub={this.findPub}
               />
@@ -152,20 +157,20 @@ export default class IndexPage extends React.Component<Props, State> {
                 defaultZoom={15}
                 onClick={this.onClickMap}
               >
-                {this.state.locations.map((l, i) => {
+                {this.state.chosenLocations.map((l, i) => {
                   return <Marker key={i} lat={l.lat} lng={l.lng} />
                 })}
-                {this.state.place && (
+                {this.state.recommendedPlaces.length > 0 && (
                   <Marker
                     color="blue"
-                    lat={this.state.place.geometry.location.lat()}
-                    lng={this.state.place.geometry.location.lng()}
+                    lat={this.state.recommendedPlaces[0].geometry.location.lat()}
+                    lng={this.state.recommendedPlaces[0].geometry.location.lng()}
                   />
                 )}
               </GoogleMapReact>
             ),
             recommendedLocations: (
-              <RecommendedLocatons place={this.state.place} />
+              <RecommendedLocatons places={this.state.recommendedPlaces} />
             ),
           }}
         </Layout>

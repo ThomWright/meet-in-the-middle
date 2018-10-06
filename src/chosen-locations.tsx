@@ -1,13 +1,14 @@
 import * as React from "react"
+import {Button} from "./button"
 import {ChosenLocation} from "./chosen-location"
-import {Location} from "./types"
+import {Loc} from "./types"
 
 interface SelectedLocationsProps {
-  locations: Array<Location>
+  locations: Array<Loc>
   onReset: () => void
   findPub: () => void
 }
-export function SelectedLocations(props: SelectedLocationsProps) {
+export function ChosenLocations(props: SelectedLocationsProps) {
   return (
     <div
       style={{
@@ -16,22 +17,22 @@ export function SelectedLocations(props: SelectedLocationsProps) {
         height: "100%",
       }}
     >
-      <div style={{flexGrow: 2}}>
+      <div style={{flexGrow: 2, overflowY: "scroll"}}>
         {props.locations.length === 0 ? (
           <p>Choose two or more locations on the map</p>
         ) : null}
         {props.locations.map((l, i) => (
-          <ChosenLocation key={i} location={l} />
+          <div style={{paddingBottom: 8}}>
+            <ChosenLocation key={i} location={l} />
+          </div>
         ))}
       </div>
-      <div style={{flexShrink: 1}}>
-        {props.locations.length > 1 ? (
-          <button onClick={props.findPub}>Find a pub!</button>
-        ) : (
-          undefined
-        )}
+      <div>
+        <div style={{paddingBottom: 8}}>
+          <Button onClick={props.findPub}>Find a pub!</Button>
+        </div>
 
-        <button onClick={props.onReset}>Reset</button>
+        <Button onClick={props.onReset}>Reset</Button>
       </div>
     </div>
   )
