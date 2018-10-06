@@ -227,23 +227,39 @@ function Layout(props: LayoutProps) {
     <div
       style={{
         height: "100vh",
+        display: "flex",
+        flexDirection: "row",
       }}
     >
       <div
         style={{
-          height: TOP_HEIGHT_PERCENT.toString() + "%",
           overflowY: "scroll",
+          width: 300,
         }}
       >
         {props.children.selectedLocations}
       </div>
       <div
         style={{
-          height: (100 - TOP_HEIGHT_PERCENT).toString() + "%",
-          width: "100%",
+          flexGrow: 1,
         }}
       >
-        {props.children.map}
+        <div
+          style={{
+            height: "100%",
+            width: "100%",
+          }}
+        >
+          {props.children.map}
+        </div>
+      </div>
+      <div
+        style={{
+          overflowY: "scroll",
+          width: 300,
+        }}
+      >
+        {props.children.recommendedLocations}
       </div>
     </div>
   )
