@@ -2,6 +2,7 @@ import * as React from "react"
 import GoogleMapReact, {
   ChildComponentProps,
   ClickEventValue,
+  Coords,
 } from "google-map-react"
 import Head from "next/head"
 import config from "../config/secret.json"
@@ -9,13 +10,27 @@ import config from "../config/secret.json"
 const TOP_HEIGHT_PERCENT = 20
 
 type Props = undefined
+type Location = Coords & {address?: string}
 interface State {
-  locations: Array<{lat: number; lng: number}>
+  locations: Array<Location>
   place?: google.maps.places.PlaceResult
+}
+
+function getMiddle(locations: Array<Coords>): Coords {
+  const sum = locations.reduce(
+    (prev, curr) => ({lat: prev.lat + curr.lat, lng: prev.lng + curr.lng}),
+    {lat: 0, lng: 0},
+  )
+
+  return {
+    lat: sum.lat / locations.length,
+    lng: sum.lng / locations.length,
+  }
 }
 
 export default class IndexPage extends React.Component<Props, State> {
   private placesService?: google.maps.places.PlacesService
+  private geocoder?: google.maps.Geocoder
 
   constructor(props: Props) {
     super(props)
@@ -29,10 +44,10 @@ export default class IndexPage extends React.Component<Props, State> {
   }
 
   private findPub() {
-    const middle = {
-      lat: 51.4598044,
-      lng: -2.5868507,
-    }
+    const middle = getMiddle(this.state.locations)
+
+    console.log(middle)
+
     if (!this.placesService) {
       throw new Error("Places service not initialised")
     }
@@ -65,15 +80,36 @@ export default class IndexPage extends React.Component<Props, State> {
   // tslint:disable-next-line no-any
   private onGoogleApiLoaded({map, maps}: {map: any; maps: any}) {
     this.placesService = new maps.places.PlacesService(map)
+    this.geocoder = new maps.Geocoder()
   }
 
   private onClickMap({lat, lng}: ClickEventValue) {
-    console.log(lat, lng)
-    this.setState(prevState => {
-      return {
-        locations: [...prevState.locations, {lat, lng}],
-      }
-    })
+    if (!this.geocoder) {
+      throw new Error("Geocoder not initialised")
+    }
+    this.geocoder.geocode(
+      {
+        location: {
+          lat,
+          lng,
+        },
+      },
+      (result, status) => {
+        const loc: Location = {
+          lat,
+          lng,
+        }
+        if (result.length > 0) {
+          const place = result[0]
+          loc.address = place.formatted_address
+        }
+        this.setState(prevState => {
+          return {
+            locations: [...prevState.locations, loc],
+          }
+        })
+      },
+    )
   }
 
   public render() {
@@ -95,19 +131,32 @@ export default class IndexPage extends React.Component<Props, State> {
             height: "100vh",
           }}
         >
-          <div style={{height: TOP_HEIGHT_PERCENT.toString() + "%"}}>
-            <p>Choose two or more locations on the map</p>
+          <div
+            style={{
+              height: TOP_HEIGHT_PERCENT.toString() + "%",
+              overflowY: "scroll",
+            }}
+          >
+            {this.state.locations.length === 0 ? (
+              <p>Choose two or more locations on the map</p>
+            ) : null}
             {this.state.locations.map((l, i) => (
-              <p key={i}>
-                {l.lat} {l.lng}
-              </p>
+              <div key={i}>
+                {l.address}
+                <LatLng {...l} />
+              </div>
             ))}
             {(() => {
               if (this.state.locations.length > 1) {
                 return <button onClick={this.findPub}>Find a pub!</button>
               }
             })()}
-            {this.state.place && this.state.place.name}
+            <div>
+              {this.state.place && this.state.place.name}{" "}
+              <p style={{display: "inline", color: "grey"}}>
+                {this.state.place && this.state.place.vicinity}
+              </p>
+            </div>
             <button onClick={this.reset}>Reset</button>
           </div>
           <div
@@ -147,6 +196,14 @@ export default class IndexPage extends React.Component<Props, State> {
       </div>
     )
   }
+}
+
+function LatLng(props: Coords) {
+  return (
+    <div style={{color: "grey", fontSize: 10}}>
+      {props.lat.toFixed(6)}, {props.lng.toFixed(6)}
+    </div>
+  )
 }
 
 interface MarkerProps extends ChildComponentProps {
