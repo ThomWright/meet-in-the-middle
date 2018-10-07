@@ -4,9 +4,10 @@ interface RecommendedLocatonsProps {
   places: Array<google.maps.places.PlaceResult>
 }
 export function RecommendedLocatons(props: RecommendedLocatonsProps) {
+  const places = props.places.slice(0, 5)
   return (
     <div style={{height: "100%", overflowY: "scroll"}}>
-      {props.places.map((p, i) => (
+      {places.map((p, i) => (
         <>
           {p.name}
           <div key={i} style={{paddingBottom: 8}}>
