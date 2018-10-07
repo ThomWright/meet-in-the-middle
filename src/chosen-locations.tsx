@@ -7,6 +7,7 @@ interface SelectedLocationsProps {
   locations: Array<Loc>
   onReset: () => void
   findPub: () => void
+  onRemove: (i: number) => void
 }
 export function ChosenLocations(props: SelectedLocationsProps) {
   return (
@@ -22,8 +23,12 @@ export function ChosenLocations(props: SelectedLocationsProps) {
           <p>Choose two or more locations on the map</p>
         ) : null}
         {props.locations.map((l, i) => (
-          <div style={{paddingBottom: 8}}>
-            <ChosenLocation key={i} location={l} />
+          <div style={{paddingBottom: 8}} key={i}>
+            <ChosenLocation
+              key={i}
+              location={l}
+              onRemove={() => props.onRemove(i)}
+            />
           </div>
         ))}
       </div>

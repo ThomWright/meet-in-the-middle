@@ -42,7 +42,8 @@ export default class IndexPage extends React.Component<Props, State> {
     }
     this.findPub = this.findPub.bind(this)
     this.reset = this.reset.bind(this)
-    this.onClickMap = this.onClickMap.bind(this)
+    this.chooseLocation = this.chooseLocation.bind(this)
+    this.removeChosenLocation = this.removeChosenLocation.bind(this)
     this.onGoogleApiLoaded = this.onGoogleApiLoaded.bind(this)
   }
 
@@ -90,7 +91,7 @@ export default class IndexPage extends React.Component<Props, State> {
     this.geocoder = new maps.Geocoder()
   }
 
-  private onClickMap({lat, lng}: ClickEventValue) {
+  private chooseLocation({lat, lng}: ClickEventValue) {
     if (!this.geocoder) {
       throw new Error("Geocoder not initialised")
     }
@@ -119,6 +120,12 @@ export default class IndexPage extends React.Component<Props, State> {
     )
   }
 
+  private removeChosenLocation(index: number) {
+    this.setState(() => ({
+      chosenLocations: this.state.chosenLocations.filter((_, i) => i !== index),
+    }))
+  }
+
   public render() {
     return (
       <div>
@@ -140,6 +147,7 @@ export default class IndexPage extends React.Component<Props, State> {
                 locations={this.state.chosenLocations}
                 onReset={this.reset}
                 findPub={this.findPub}
+                onRemove={this.removeChosenLocation}
               />
             ),
             map: (
@@ -156,7 +164,7 @@ export default class IndexPage extends React.Component<Props, State> {
                   lng: -2.5868507,
                 }}
                 defaultZoom={15}
-                onClick={this.onClickMap}
+                onClick={this.chooseLocation}
                 options={{
                   styles: googleMapStyles(),
                 }}

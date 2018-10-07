@@ -38,6 +38,7 @@
     "radix": true,
     "switch-default": true,
     "restrict-plus-operands": true,
-    "no-invalid-template-strings": true
+    "no-invalid-template-strings": true,
+    "jsx-no-lambda": false
   }
 }
