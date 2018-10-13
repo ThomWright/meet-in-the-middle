@@ -7,9 +7,10 @@ import GoogleMapReact, {
 import Head from "next/head"
 import * as React from "react"
 import config from "../config/secret.json"
+import {ChosenLocations} from "../src/chosen-locations"
 import {Layout} from "../src/layout"
 import {RecommendedLocatons} from "../src/recommended-locations"
-import {ChosenLocations} from "../src/chosen-locations"
+import {THEME} from "../src/theme"
 import {Loc} from "../src/types"
 
 type Props = undefined
@@ -131,8 +132,8 @@ export default class IndexPage extends React.Component<Props, State> {
       <div>
         <Head>
           <title>Meet in the middle</title>
-          <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-          <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+          <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+          <meta httpEquiv="content-type" content="text/html; charset=utf-8" />
           <meta name="description" content="Meet in the middle" />
           <meta
             name="viewport"
@@ -174,7 +175,7 @@ export default class IndexPage extends React.Component<Props, State> {
                 })}
                 {this.state.recommendedPlaces.length > 0 && (
                   <Marker
-                    color="blue"
+                    color={THEME.suggestedPlacePin}
                     lat={this.state.recommendedPlaces[0].geometry.location.lat()}
                     lng={this.state.recommendedPlaces[0].geometry.location.lng()}
                   />
@@ -199,7 +200,7 @@ function Marker(props: MarkerProps) {
     <div
       style={{
         borderRadius: "50%",
-        backgroundColor: props.color || "red",
+        backgroundColor: props.color || THEME.defaultPinColor,
         width: "10px",
         height: "10px",
       }}

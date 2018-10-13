@@ -17,6 +17,7 @@ export function Layout(props: LayoutProps) {
       }}
     >
       <Column>{props.children.selectedLocations}</Column>
+      <Column>{props.children.recommendedLocations}</Column>
       <div
         style={{
           flexGrow: 1,
@@ -31,7 +32,6 @@ export function Layout(props: LayoutProps) {
           {props.children.map}
         </div>
       </div>
-      <Column>{props.children.recommendedLocations}</Column>
     </div>
   )
 }

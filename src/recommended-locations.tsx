@@ -1,4 +1,5 @@
 import * as React from "react"
+import {THEME} from "./theme"
 
 interface RecommendedLocatonsProps {
   places: Array<google.maps.places.PlaceResult>
@@ -11,7 +12,7 @@ export function RecommendedLocatons(props: RecommendedLocatonsProps) {
         <>
           {p.name}
           <div key={i} style={{paddingBottom: 8}}>
-            <p style={{display: "inline", color: "grey"}}>{p.vicinity}</p>
+            <p style={{display: "inline", color: THEME.lightGrey}}>{p.vicinity}</p>
           </div>
         </>
       ))}
