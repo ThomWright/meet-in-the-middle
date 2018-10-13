@@ -1,4 +1,5 @@
 import * as React from "react"
+import {THEME} from "./theme"
 
 interface LayoutProps {
   children: {
@@ -13,25 +14,56 @@ export function Layout(props: LayoutProps) {
       style={{
         height: "100vh",
         display: "flex",
-        flexDirection: "row",
+        flexDirection: "column",
       }}
     >
-      <Column>{props.children.selectedLocations}</Column>
-      <Column>{props.children.recommendedLocations}</Column>
       <div
         style={{
-          flexGrow: 1,
+          padding: THEME.paddingBase * 4,
+          borderBottomColor: THEME.borderColor,
+          borderBottomWidth: 1,
+          borderBottomStyle: "solid",
         }}
       >
+        <Header />
+      </div>
+      <div
+        style={{
+          flexGrow: 2,
+          display: "flex",
+          flexDirection: "row",
+        }}
+      >
+        <Column>{props.children.selectedLocations}</Column>
+        <Column>{props.children.recommendedLocations}</Column>
         <div
           style={{
-            height: "100%",
-            width: "100%",
+            flexGrow: 1,
+            padding: THEME.paddingBase,
           }}
         >
-          {props.children.map}
+          <div
+            style={{
+              height: "100%",
+              width: "100%",
+            }}
+          >
+            {props.children.map}
+          </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+function Header() {
+  return (
+    <div
+      style={{
+        fontSize: 20,
+      }}
+    >
+      Meet in the Middle
     </div>
   )
 }
@@ -42,7 +74,7 @@ function Column(props: {children: React.ReactNode}) {
       style={{
         height: "100%",
         width: 300,
-        padding: 8,
+        padding: THEME.paddingBase,
         overflowY: "hidden",
       }}
     >

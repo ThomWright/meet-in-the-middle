@@ -55,13 +55,12 @@ export class Button extends React.Component<Props, State> {
           padding: 0,
           margin: 0,
           border: 1,
-          // borderColor: THEME.grey,
           borderStyle: "solid",
           borderRadius: 4,
 
           ...(this.state.hover
-            ? {borderColor: THEME.grey}
-            : {borderColor: THEME.lightGrey}),
+            ? {borderColor: THEME.lightGrey}
+            : {borderColor: THEME.borderColor}),
 
           ...(this.state.active
             ? {backgroundColor: THEME.lighterGrey}

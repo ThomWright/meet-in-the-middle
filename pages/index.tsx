@@ -140,7 +140,15 @@ export default class IndexPage extends React.Component<Props, State> {
             content="initial-scale=1.0, width=device-width"
           />
         </Head>
-        <style>{"* {margin: 0; box-sizing: border-box}"}</style>
+        <style>
+          {
+            '* { \
+              margin: 0; \
+              box-sizing: border-box; \
+              font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; \
+            }'
+          }
+        </style>
         <Layout>
           {{
             selectedLocations: (
