@@ -29,7 +29,11 @@ export function ChosenLocations(props: SelectedLocationsProps) {
           overflowY: "scroll",
         }}
       >
-        <div>
+        <div
+          style={{
+            width: "100%",
+          }}
+        >
           {props.locations.map((l, i) => (
             <div style={{paddingTop: 8, paddingBottom: 8}} key={i}>
               <ChosenLocation
