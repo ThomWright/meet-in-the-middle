@@ -1,13 +1,13 @@
 const COLORS = {
+  darkGrey: "#333",
   grey: "#888",
   lightGrey: "#BBB",
   lighterGrey: "#DDD",
 }
 
 export const THEME = {
-  defaultPinColor: "blue",
-  chosenLocationPin: "blue",
-  suggestedPlacePin: "red",
+  defaultPinColor: COLORS.grey,
+  suggestedPlacePin: COLORS.darkGrey,
 
   ...COLORS,
 
