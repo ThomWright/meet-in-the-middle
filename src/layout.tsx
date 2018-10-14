@@ -32,6 +32,7 @@ export function Layout(props: LayoutProps) {
           flexGrow: 2,
           display: "flex",
           flexDirection: "row",
+          height: 0,
         }}
       >
         <Column>{props.children.selectedLocations}</Column>

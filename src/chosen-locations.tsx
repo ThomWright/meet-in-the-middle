@@ -26,7 +26,7 @@ export function ChosenLocations(props: SelectedLocationsProps) {
           display: "flex",
           flexDirection: "column",
           flexGrow: 2,
-          overflowY: "scroll",
+          overflowY: "auto",
         }}
       >
         <div

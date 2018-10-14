@@ -11,7 +11,7 @@ export function RecommendedLocatons(props: RecommendedLocatonsProps) {
     <div
       style={{
         height: "100%",
-        overflowY: "scroll",
+        overflowY: "auto",
       }}
     >
       {places.map((p, i) => (
