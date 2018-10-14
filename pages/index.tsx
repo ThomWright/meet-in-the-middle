@@ -1,16 +1,11 @@
-import GoogleMapReact, {
-  ChildComponentProps,
-  ClickEventValue,
-  Coords,
-  MapTypeStyle,
-} from "google-map-react"
+import {ClickEventValue, Coords} from "google-map-react"
 import Head from "next/head"
 import * as React from "react"
 import config from "../config/secret.json"
+import {Map} from "../src/map"
 import {ChosenLocations} from "../src/chosen-locations"
 import {Layout} from "../src/layout"
 import {RecommendedLocatons} from "../src/recommended-locations"
-import {THEME} from "../src/theme"
 import {Loc} from "../src/types"
 
 type Props = undefined
@@ -55,8 +50,6 @@ export default class IndexPage extends React.Component<Props, State> {
 
     const middle = getMiddle(this.state.chosenLocations)
 
-    console.log(middle)
-
     if (!this.placesService) {
       throw new Error("Places service not initialised")
     }
@@ -66,8 +59,7 @@ export default class IndexPage extends React.Component<Props, State> {
         type: "bar",
         rankBy: google.maps.places.RankBy.DISTANCE,
       },
-      (results, status) => {
-        console.log(results, status)
+      results => {
         this.setState(() => {
           return {
             recommendedPlaces: results,
@@ -103,7 +95,7 @@ export default class IndexPage extends React.Component<Props, State> {
           lng,
         },
       },
-      (result, status) => {
+      result => {
         const loc: Loc = {
           lat,
           lng,
@@ -160,35 +152,13 @@ export default class IndexPage extends React.Component<Props, State> {
               />
             ),
             map: (
-              <GoogleMapReact
-                bootstrapURLKeys={
-                  {key: config.GOOGLE_API_KEY, libraries: "places"} as {
-                    key: string
-                  }
-                }
+              <Map
+                apiKey={config.GOOGLE_API_KEY}
+                chooseLocation={this.chooseLocation}
                 onGoogleApiLoaded={this.onGoogleApiLoaded}
-                yesIWantToUseGoogleMapApiInternals={true}
-                defaultCenter={{
-                  lat: 51.4598044,
-                  lng: -2.5868507,
-                }}
-                defaultZoom={15}
-                onClick={this.chooseLocation}
-                options={{
-                  styles: googleMapStyles(),
-                }}
-              >
-                {this.state.chosenLocations.map((l, i) => {
-                  return <Marker key={i} lat={l.lat} lng={l.lng} />
-                })}
-                {this.state.recommendedPlaces.length > 0 && (
-                  <Marker
-                    color={THEME.suggestedPlacePin}
-                    lat={this.state.recommendedPlaces[0].geometry.location.lat()}
-                    lng={this.state.recommendedPlaces[0].geometry.location.lng()}
-                  />
-                )}
-              </GoogleMapReact>
+                chosenLocations={this.state.chosenLocations}
+                recommendedPlaces={this.state.recommendedPlaces}
+              />
             ),
             recommendedLocations: (
               <RecommendedLocatons places={this.state.recommendedPlaces} />
@@ -198,99 +168,4 @@ export default class IndexPage extends React.Component<Props, State> {
       </div>
     )
   }
-}
-
-interface MarkerProps extends ChildComponentProps {
-  color?: string
-}
-function Marker(props: MarkerProps) {
-  return (
-    <div
-      style={{
-        borderRadius: "50%",
-        backgroundColor: props.color || THEME.defaultPinColor,
-        width: "10px",
-        height: "10px",
-      }}
-    />
-  )
-}
-
-function googleMapStyles(): Array<MapTypeStyle> {
-  return [
-    {elementType: "geometry", stylers: [{color: "#f5f5f5"}]} as any,
-    {elementType: "labels.icon", stylers: [{visibility: "off"}]} as any,
-    {elementType: "labels.text.fill", stylers: [{color: "#616161"}]} as any,
-    {elementType: "labels.text.stroke", stylers: [{color: "#f5f5f5"}]} as any,
-    {
-      featureType: "administrative.land_parcel",
-      elementType: "labels.text.fill",
-      stylers: [{color: "#bdbdbd"}],
-    },
-    {
-      featureType: "poi",
-      elementType: "geometry",
-      stylers: [{color: "#eeeeee"}],
-    },
-    {
-      featureType: "poi",
-      elementType: "labels.text.fill",
-      stylers: [{color: "#757575"}],
-    },
-    {
-      featureType: "poi.park",
-      elementType: "geometry",
-      stylers: [{color: "#e5e5e5"}],
-    },
-    {
-      featureType: "poi.park",
-      elementType: "labels.text.fill",
-      stylers: [{color: "#9e9e9e"}],
-    },
-    {
-      featureType: "road",
-      elementType: "geometry",
-      stylers: [{color: "#ffffff"}],
-    },
-    {
-      featureType: "road.arterial",
-      elementType: "labels.text.fill",
-      stylers: [{color: "#757575"}],
-    },
-    {
-      featureType: "road.highway",
-      elementType: "geometry",
-      stylers: [{color: "#dadada"}],
-    },
-    {
-      featureType: "road.highway",
-      elementType: "labels.text.fill",
-      stylers: [{color: "#616161"}],
-    },
-    {
-      featureType: "road.local",
-      elementType: "labels.text.fill",
-      stylers: [{color: "#9e9e9e"}],
-    },
-    {
-      featureType: "transit.line",
-      elementType: "geometry",
-      stylers: [{color: "#e5e5e5"}],
-    },
-    {
-      featureType: "transit.station",
-      elementType: "geometry",
-      stylers: [{color: "#eeeeee"}],
-    },
-    {
-      featureType: "water",
-      elementType: "geometry",
-      stylers: [{color: "#c9c9c9"}],
-    },
-    {
-      featureType: "water",
-      elementType: "labels.text.fill",
-      stylers: [{color: "#9e9e9e"}],
-    },
-  ]
 }
