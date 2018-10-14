@@ -57,6 +57,7 @@ export class Button extends React.Component<Props, State> {
           border: 1,
           borderStyle: "solid",
           borderRadius: 4,
+          cursor: "pointer",
 
           ...(this.state.hover
             ? {borderColor: THEME.lightGrey}
