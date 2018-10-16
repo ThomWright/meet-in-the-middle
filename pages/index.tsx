@@ -1,17 +1,21 @@
 import {ClickEventValue, Coords} from "google-map-react"
 import Head from "next/head"
 import * as React from "react"
+import {ChosenLocationState} from "../src/chosen-location.jsx"
 import config from "../config/secret.json"
-import {Map} from "../src/map"
 import {ChosenLocations} from "../src/chosen-locations"
 import {Layout} from "../src/layout"
-import {RecommendedLocatons} from "../src/recommended-locations"
+import {Map} from "../src/map"
+import {
+  RecommendedLocatons,
+  RecommendedPlaceState,
+} from "../src/recommended-locations"
 import {Loc} from "../src/types"
 
 type Props = undefined
 interface State {
-  chosenLocations: Array<Loc>
-  recommendedPlaces: Array<google.maps.places.PlaceResult>
+  chosenLocations: Array<ChosenLocationState>
+  recommendedPlaces: Array<RecommendedPlaceState>
 }
 
 function getMiddle(locations: Array<Coords>): Coords {
@@ -48,7 +52,7 @@ export default class IndexPage extends React.Component<Props, State> {
       return
     }
 
-    const middle = getMiddle(this.state.chosenLocations)
+    const middle = getMiddle(this.state.chosenLocations.map(cl => cl.location))
 
     if (!this.placesService) {
       throw new Error("Places service not initialised")
@@ -62,7 +66,10 @@ export default class IndexPage extends React.Component<Props, State> {
       results => {
         this.setState(() => {
           return {
-            recommendedPlaces: results,
+            recommendedPlaces: results.slice(0, 5).map(place => ({
+              highlight: false,
+              place,
+            })),
           }
         })
       },
@@ -106,7 +113,10 @@ export default class IndexPage extends React.Component<Props, State> {
         }
         this.setState(prevState => {
           return {
-            chosenLocations: [...prevState.chosenLocations, loc],
+            chosenLocations: [
+              ...prevState.chosenLocations,
+              {highlight: false, location: loc},
+            ],
           }
         })
       },
@@ -149,6 +159,34 @@ export default class IndexPage extends React.Component<Props, State> {
                 onReset={this.reset}
                 findPub={this.findPub}
                 onRemove={this.removeChosenLocation}
+                onMouseEnter={i => {
+                  this.setState(prevState => ({
+                    chosenLocations: prevState.chosenLocations.map(
+                      (l, lIndex) => {
+                        return i === lIndex
+                          ? {
+                              ...l,
+                              highlight: true,
+                            }
+                          : l
+                      },
+                    ),
+                  }))
+                }}
+                onMouseLeave={i => {
+                  this.setState(prevState => ({
+                    chosenLocations: prevState.chosenLocations.map(
+                      (l, lIndex) => {
+                        return i === lIndex
+                          ? {
+                              ...l,
+                              highlight: false,
+                            }
+                          : l
+                      },
+                    ),
+                  }))
+                }}
               />
             ),
             map: (
@@ -161,7 +199,37 @@ export default class IndexPage extends React.Component<Props, State> {
               />
             ),
             recommendedLocations: (
-              <RecommendedLocatons places={this.state.recommendedPlaces} />
+              <RecommendedLocatons
+                places={this.state.recommendedPlaces}
+                onMouseEnter={i => {
+                  this.setState(prevState => ({
+                    recommendedPlaces: prevState.recommendedPlaces.map(
+                      (l, lIndex) => {
+                        return i === lIndex
+                          ? {
+                              ...l,
+                              highlight: true,
+                            }
+                          : l
+                      },
+                    ),
+                  }))
+                }}
+                onMouseLeave={i => {
+                  this.setState(prevState => ({
+                    recommendedPlaces: prevState.recommendedPlaces.map(
+                      (l, lIndex) => {
+                        return i === lIndex
+                          ? {
+                              ...l,
+                              highlight: false,
+                            }
+                          : l
+                      },
+                    ),
+                  }))
+                }}
+              />
             ),
           }}
         </Layout>

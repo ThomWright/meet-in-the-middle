@@ -1,5 +1,5 @@
 const COLORS = {
-  darkGrey: "#333",
+  darkGrey: "#555",
   grey: "#888",
   lightGrey: "#BBB",
   lighterGrey: "#DDD",
@@ -12,6 +12,8 @@ export const THEME = {
   ...COLORS,
 
   borderColor: COLORS.lighterGrey,
+
+  highlightColor: "black",
 
   paddingBase: 8,
 }

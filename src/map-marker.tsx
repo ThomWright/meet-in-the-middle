@@ -16,24 +16,24 @@ export function Marker(props: MarkerProps) {
         style={{
           ...CIRCLE_STYLE,
           backgroundColor: props.color || THEME.defaultPinColor,
-          width: 10,
-          height: 10,
+          width: THEME.paddingBase * 2,
+          height: THEME.paddingBase * 2,
         }}
       />
       <div
         style={{
           ...CIRCLE_STYLE,
           backgroundColor: "white",
-          width: 8,
-          height: 8,
+          width: THEME.paddingBase * 1.5,
+          height: THEME.paddingBase * 1.5,
         }}
       />
       <div
         style={{
           ...CIRCLE_STYLE,
           backgroundColor: props.color || THEME.defaultPinColor,
-          width: 4,
-          height: 4,
+          width: THEME.paddingBase,
+          height: THEME.paddingBase,
         }}
       />
     </>

@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "tsc --noEmit --project tsconfig.json && tslint 'src/**/*.ts' 'pages/**/*.ts' --project tsconfig.json --format verbose"
   },
   "author": "Thom Wright",
   "license": "MIT",

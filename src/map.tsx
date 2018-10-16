@@ -1,14 +1,15 @@
 import GoogleMapReact, {ClickEventValue, MapTypeStyle} from "google-map-react"
-import {THEME} from "./theme"
-import {Loc} from "./types"
+import {ChosenLocationState} from "./chosen-location"
 import {Marker} from "./map-marker"
+import {RecommendedPlaceState} from "./recommended-locations"
+import {THEME} from "./theme"
 
 interface Props {
   apiKey: string
   onGoogleApiLoaded(maps: {map: any; maps: any}): void
   chooseLocation(e: ClickEventValue): void
-  chosenLocations: Array<Loc>
-  recommendedPlaces: Array<google.maps.places.PlaceResult>
+  chosenLocations: Array<ChosenLocationState>
+  recommendedPlaces: Array<RecommendedPlaceState>
 }
 
 export function Map(props: Props) {
@@ -32,15 +33,24 @@ export function Map(props: Props) {
       }}
     >
       {props.chosenLocations.map((l, i) => {
-        return <Marker key={i} lat={l.lat} lng={l.lng} />
+        return (
+          <Marker
+            key={i}
+            lat={l.location.lat}
+            lng={l.location.lng}
+            color={l.highlight ? THEME.highlightColor : undefined}
+          />
+        )
       })}
-      {props.recommendedPlaces.length > 0 && (
+      {props.recommendedPlaces.map(place => (
         <Marker
-          color={THEME.suggestedPlacePin}
-          lat={props.recommendedPlaces[0].geometry.location.lat()}
-          lng={props.recommendedPlaces[0].geometry.location.lng()}
+          color={
+            place.highlight ? THEME.highlightColor : THEME.suggestedPlacePin
+          }
+          lat={place.place.geometry.location.lat()}
+          lng={place.place.geometry.location.lng()}
         />
-      )}
+      ))}
     </GoogleMapReact>
   )
 }

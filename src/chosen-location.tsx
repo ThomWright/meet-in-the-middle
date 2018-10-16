@@ -3,14 +3,24 @@ import {Loc} from "./types"
 import {THEME} from "./theme"
 import {Card} from "./card"
 
-interface ChosenLocationProps {
+export interface ChosenLocationState {
   location: Loc
-  onRemove: () => void
-  isOdd: boolean
+  highlight: boolean
 }
+
+interface ChosenLocationProps extends ChosenLocationState {
+  onRemove: () => void
+  onMouseEnter: () => void
+  onMouseLeave: () => void
+}
+
 export function ChosenLocation(props: ChosenLocationProps) {
   return (
-    <Card>
+    <Card
+      highlight={props.highlight}
+      onMouseEnter={props.onMouseEnter}
+      onMouseLeave={props.onMouseLeave}
+    >
       <div
         style={{
           display: "flex",
