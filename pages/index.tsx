@@ -1,8 +1,9 @@
-import {ClickEventValue, Coords} from "google-map-react"
+import geolib from "geolib"
+import {ClickEventValue} from "google-map-react"
 import Head from "next/head"
 import * as React from "react"
-import {ChosenLocationState} from "../src/chosen-location.jsx"
 import config from "../config/secret.json"
+import {ChosenLocationState} from "../src/chosen-location"
 import {ChosenLocations} from "../src/chosen-locations"
 import {Layout} from "../src/layout"
 import {Map} from "../src/map"
@@ -16,18 +17,6 @@ type Props = undefined
 interface State {
   chosenLocations: Array<ChosenLocationState>
   recommendedPlaces: Array<RecommendedPlaceState>
-}
-
-function getMiddle(locations: Array<Coords>): Coords {
-  const sum = locations.reduce(
-    (prev, curr) => ({lat: prev.lat + curr.lat, lng: prev.lng + curr.lng}),
-    {lat: 0, lng: 0},
-  )
-
-  return {
-    lat: sum.lat / locations.length,
-    lng: sum.lng / locations.length,
-  }
 }
 
 export default class IndexPage extends React.Component<Props, State> {
@@ -52,14 +41,22 @@ export default class IndexPage extends React.Component<Props, State> {
       return
     }
 
-    const middle = getMiddle(this.state.chosenLocations.map(cl => cl.location))
+    const middle = geolib.getCenter(
+      this.state.chosenLocations.map(cl => ({
+        latitude: cl.location.lat,
+        longitude: cl.location.lng,
+      })),
+    )
 
     if (!this.placesService) {
       throw new Error("Places service not initialised")
     }
     this.placesService.nearbySearch(
       {
-        location: middle,
+        location: {
+          lat: parseFloat((middle.latitude as any) as string),
+          lng: parseFloat((middle.longitude as any) as string),
+        },
         type: "bar",
         rankBy: google.maps.places.RankBy.DISTANCE,
       },
