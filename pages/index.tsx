@@ -162,28 +162,14 @@ export default class IndexPage extends React.Component<Props, State> {
                 onMouseEnter={i => {
                   this.setState(prevState => ({
                     chosenLocations: prevState.chosenLocations.map(
-                      (l, lIndex) => {
-                        return i === lIndex
-                          ? {
-                              ...l,
-                              highlight: true,
-                            }
-                          : l
-                      },
+                      highlightIndex(i, true),
                     ),
                   }))
                 }}
                 onMouseLeave={i => {
                   this.setState(prevState => ({
                     chosenLocations: prevState.chosenLocations.map(
-                      (l, lIndex) => {
-                        return i === lIndex
-                          ? {
-                              ...l,
-                              highlight: false,
-                            }
-                          : l
-                      },
+                      highlightIndex(i, false),
                     ),
                   }))
                 }}
@@ -204,28 +190,14 @@ export default class IndexPage extends React.Component<Props, State> {
                 onMouseEnter={i => {
                   this.setState(prevState => ({
                     recommendedPlaces: prevState.recommendedPlaces.map(
-                      (l, lIndex) => {
-                        return i === lIndex
-                          ? {
-                              ...l,
-                              highlight: true,
-                            }
-                          : l
-                      },
+                      highlightIndex(i, true),
                     ),
                   }))
                 }}
                 onMouseLeave={i => {
                   this.setState(prevState => ({
                     recommendedPlaces: prevState.recommendedPlaces.map(
-                      (l, lIndex) => {
-                        return i === lIndex
-                          ? {
-                              ...l,
-                              highlight: false,
-                            }
-                          : l
-                      },
+                      highlightIndex(i, false),
                     ),
                   }))
                 }}
@@ -235,5 +207,18 @@ export default class IndexPage extends React.Component<Props, State> {
         </Layout>
       </div>
     )
+  }
+}
+
+function highlightIndex<T extends {highlight: boolean}>(
+  indexToHighlight: number,
+  highlight: boolean,
+) {
+  return (x: T, xIndex: number): T => {
+    return indexToHighlight === xIndex
+      ? Object.assign({}, x, {
+          highlight,
+        })
+      : x
   }
 }
