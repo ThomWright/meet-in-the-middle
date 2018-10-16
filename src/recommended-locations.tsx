@@ -23,6 +23,7 @@ export function RecommendedLocatons(props: RecommendedLocatonsProps) {
     >
       {props.places.map((p, i) => (
         <div
+          key={i}
           style={{
             paddingTop: 8,
             paddingBottom: 8,
